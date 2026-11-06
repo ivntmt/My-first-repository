@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Лендинг и UI-кит</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Концепция: тёмный технологичный SaaS-лендинг. Один акцент (фиолет) для действий,
+   циан только для данных и статусов. Сетка 12 колонок, контейнер 1200. */
+:root {
+  color-scheme: dark;
+  /* Поверхности */
+  --bg: #0A0B10; --s1: #11131A; --s2: #171A23; --s3: #1E2230;
+  /* Линии */
+  --line: #232838; --line-2: #2D3345; --line-3: #3D4560;
+  /* Текст */
+  --t1: #F2F4F8; --t2: #A6AEC2; --t3: #7D86A0;
+  /* Акцент */
+  --ac-300: #C2B5FF; --ac-400: #A18BFF; --ac-500: #7C5CFF; --ac-600: #6A45F5; --ac-700: #5733D6;
+  --glow: rgba(124, 92, 255, .35);
+  /* Данные и статусы */
+  --cy: #2DD4FF; --ok: #34D399; --warn: #FBBF24; --err: #F87171;
+  /* Шрифты */
+  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Радиусы */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px; --r-pill: 999px;
+  --gutter: 20px;
+}
+@media (min-width: 720px) { :root { --gutter: 24px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--t1);
+  font: 400 16px/24px var(--font-sans);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3, h4 { text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--ac-400); outline-offset: 2px; border-radius: var(--r-sm); }
+.mono { font-family: var(--font-mono); }
+.wrap {
+  width: 100%; max-width: calc(1200px + 2 * var(--gutter)); margin-inline: auto;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Типографика ---------- */
+.t-display { font: 700 40px/44px var(--font-sans); letter-spacing: -0.02em; }
+.t-h2 { font: 600 28px/34px var(--font-sans); letter-spacing: -0.015em; }
+.t-h3 { font: 600 22px/30px var(--font-sans); letter-spacing: -0.01em; }
+.t-h4 { font: 600 20px/28px var(--font-sans); }
+.t-body-l { font: 400 18px/28px var(--font-sans); }
+.t-body { font: 400 16px/24px var(--font-sans); }
+.t-body-s { font: 400 14px/20px var(--font-sans); }
+.t-caption { font: 400 12px/16px var(--font-sans); }
+.t-overline { font: 500 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+@media (min-width: 768px) {
+  .t-display { font-size: 64px; line-height: 68px; }
+  .t-h2 { font-size: 36px; line-height: 42px; }
+  .t-h3 { font-size: 24px; line-height: 32px; }
+}
+.c-t2 { color: var(--t2); } .c-t3 { color: var(--t3); } .c-ac { color: var(--ac-400); }
+
+/* ---------- Кнопки ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 600 16px/24px var(--font-sans); height: 56px; padding: 0 28px; border-radius: 12px;
+  border: 1px solid transparent; cursor: pointer; white-space: nowrap; color: var(--t1);
+  background: none; transition: background .15s, border-color .15s, box-shadow .15s, transform .15s;
+}
+.btn-m { height: 44px; padding: 0 20px; font-size: 15px; }
+.btn-s { height: 36px; padding: 0 14px; font-size: 14px; line-height: 20px; border-radius: var(--r-md); }
+.btn-primary { background: var(--ac-600); color: #fff; }
+.btn-primary:hover, .btn-primary.is-hover { box-shadow: 0 8px 28px -4px var(--glow); transform: translateY(-1px); background: #7350F8; }
+.btn-primary:active, .btn-primary.is-active { background: var(--ac-700); transform: none; box-shadow: none; }
+.btn-secondary { border-color: var(--line-3); background: transparent; }
+.btn-secondary:hover, .btn-secondary.is-hover { background: var(--s3); border-color: #5B6585; }
+.btn-secondary:active, .btn-secondary.is-active { background: var(--s2); }
+.btn-ghost { color: var(--t2); }
+.btn-ghost:hover, .btn-ghost.is-hover { color: var(--t1); background: var(--s2); }
+.btn-ghost:active, .btn-ghost.is-active { background: var(--s3); }
+.btn.is-focus { outline: 2px solid var(--ac-400); outline-offset: 2px; }
+.btn[disabled], .btn.is-disabled { background: var(--s2); color: var(--t3); border-color: transparent; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn.is-loading { pointer-events: none; }
+.btn.is-loading::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-block { width: 100%; }
+
+/* ---------- Бейдж, статус, сегмент ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px;
+  border-radius: var(--r-pill); border: 1px solid var(--line-2); background: var(--s1);
+  font: 500 12px/16px var(--font-mono); letter-spacing: .04em; color: var(--t2);
+}
+.badge-ac { border-color: rgba(161,139,255,.4); background: rgba(124,92,255,.12); color: var(--ac-300); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(52,211,153,.18); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 6px rgba(52,211,153,0); } }
+.seg { display: inline-flex; padding: 4px; gap: 4px; border: 1px solid var(--line-2); background: var(--s1); border-radius: var(--r-pill); }
+.seg button {
+  height: 36px; padding: 0 18px; border: 0; border-radius: var(--r-pill); background: transparent;
+  color: var(--t2); font: 500 14px/20px var(--font-sans); cursor: pointer; transition: background .15s, color .15s;
+}
+.seg button:hover { color: var(--t1); }
+.seg button[aria-pressed="true"], .seg button.is-on { background: var(--s3); color: var(--t1); box-shadow: inset 0 0 0 1px var(--line-3); }
+.seg small { font: 500 12px/16px var(--font-mono); color: var(--ok); margin-left: 6px; }
+
+/* ---------- Верхняя панель просмотра ---------- */
+.viewbar { background: var(--s1); border-bottom: 1px solid var(--line); }
+.viewbar .wrap { display: flex; gap: 8px; align-items: center; min-height: 44px; flex-wrap: wrap; padding-block: 6px; }
+.viewbar span { font: 500 12px/16px var(--font-mono); color: var(--t3); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.viewbar a { padding: 6px 14px; border-radius: var(--r-pill); font: 500 14px/20px var(--font-sans); color: var(--t2); border: 1px solid transparent; }
+.viewbar a:hover { color: var(--t1); }
+.viewbar a[aria-current="page"] { color: var(--t1); border-color: var(--line-3); background: var(--s3); }
+
+/* ---------- Шапка ---------- */
+.hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: rgba(10,11,16,.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.hdr-in { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 72px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font: 700 20px/28px var(--font-sans); letter-spacing: -0.01em; }
+.logo svg { flex: none; }
+.nav { display: none; gap: 4px; }
+.nav a { padding: 8px 14px; border-radius: var(--r-md); color: var(--t2); font: 500 15px/24px var(--font-sans); transition: color .15s, background .15s; }
+.nav a:hover { color: var(--t1); background: var(--s2); }
+.hdr-cta { display: none; gap: 8px; align-items: center; }
+.burger { width: 44px; height: 44px; display: inline-grid; place-items: center; border-radius: var(--r-md); border: 1px solid var(--line-2); background: var(--s1); color: var(--t1); cursor: pointer; }
+.mnav { border-top: 1px solid var(--line); background: var(--bg); }
+.mnav .wrap { display: grid; gap: 4px; padding-block: 12px 20px; }
+.mnav a:not(.btn) { padding: 12px 8px; border-radius: var(--r-md); color: var(--t2); font: 500 16px/24px var(--font-sans); }
+.mnav a:not(.btn):hover { color: var(--t1); background: var(--s2); }
+.mnav .btn { margin-top: 8px; }
+@media (min-width: 960px) { .nav, .hdr-cta { display: flex; } .burger, .mnav { display: none !important; } }
+
+/* ---------- Секции ---------- */
+section { scroll-margin-top: 88px; }
+.sec { padding-block: 72px; }
+@media (min-width: 960px) { .sec { padding-block: 112px; } }
+.sec-head { display: grid; gap: 12px; max-width: 640px; margin-bottom: 48px; }
+.sec-head .t-overline { color: var(--ac-400); }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; padding-block: 56px 72px; }
+@media (min-width: 960px) { .hero { padding-block: 112px 96px; } }
+.hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 20%, transparent 75%); mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 20%, transparent 75%);
+}
+.hero::after { content: ""; position: absolute; width: 640px; height: 640px; right: -180px; top: -200px; border-radius: 50%; background: radial-gradient(circle, rgba(124,92,255,.28), transparent 65%); pointer-events: none; }
+.hero-grid { position: relative; z-index: 1; display: grid; gap: 56px; align-items: center; }
+@media (min-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 64px; } }
+.hero-copy { display: grid; gap: 24px; justify-items: start; min-width: 0; }
+.hero-copy .t-body-l { color: var(--t2); max-width: 540px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero-note { font: 400 14px/20px var(--font-sans); color: var(--t3); }
+.mark { background: linear-gradient(100deg, var(--ac-300), var(--cy)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.mock { min-width: 0; border: 1px solid var(--line-2); border-radius: var(--r-xl); background: linear-gradient(180deg, var(--s2), var(--s1)); box-shadow: 0 32px 80px -24px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.02) inset; overflow: hidden; }
+.mock-bar { display: flex; align-items: center; gap: 8px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.mock-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-3); }
+.mock-bar .mono { margin-left: 8px; color: var(--t3); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.mock-bar .badge { margin-left: auto; height: 24px; padding: 0 10px; color: var(--ok); border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.08); flex: none; }
+.mock-body { padding: 24px 20px; display: grid; gap: 0; justify-items: stretch; }
+.node { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--line-2); border-radius: var(--r-lg); background: var(--s2); font: 500 15px/22px var(--font-sans); }
+.node b { font: 500 11px/16px var(--font-mono); letter-spacing: .08em; color: var(--t3); }
+.node-ac { border-color: rgba(161,139,255,.45); background: rgba(124,92,255,.10); }
+.node-ac b { color: var(--ac-300); }
+.link { width: 2px; height: 20px; margin: 0 auto; background: linear-gradient(var(--line-3), var(--ac-500)); }
+.mock-foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.mock-foot div { padding: 16px 20px; display: grid; gap: 2px; }
+.mock-foot div + div { border-left: 1px solid var(--line); }
+.mock-foot b { font: 600 20px/28px var(--font-mono); font-variant-numeric: tabular-nums; color: var(--cy); }
+.mock-foot span { font: 400 12px/16px var(--font-sans); color: var(--t3); }
+
+/* Карточки преимуществ */
+.grid-3 { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.card { padding: 32px; border: 1px solid var(--line-2); border-radius: var(--r-xl); background: var(--s1); display: grid; gap: 16px; align-content: start; min-width: 0; transition: border-color .2s, background .2s, transform .2s; }
+.card:hover { border-color: var(--line-3); background: var(--s2); transform: translateY(-2px); }
+.card p { color: var(--t2); }
+.ico { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: rgba(124,92,255,.14); border: 1px solid rgba(161,139,255,.28); color: var(--ac-300); }
+.ico svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Как это работает */
+.band { background: var(--s1); border-block: 1px solid var(--line); }
+.steps { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); counter-reset: s; position: relative; }
+.step { display: grid; gap: 12px; align-content: start; padding-top: 24px; border-top: 1px solid var(--line-3); position: relative; min-width: 0; }
+.step::before { content: ""; position: absolute; top: -1px; left: 0; width: 48px; height: 2px; background: var(--ac-500); }
+.step-n { font: 500 14px/20px var(--font-mono); color: var(--ac-400); letter-spacing: .06em; }
+.step p { color: var(--t2); }
+
+/* Тарифы */
+.price-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 48px; }
+.price-head .sec-head { margin-bottom: 0; }
+.plans { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); max-width: 520px; margin-inline: auto; align-items: stretch; }
+@media (min-width: 960px) { .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; } }
+.plan { display: flex; flex-direction: column; gap: 24px; padding: 32px; border: 1px solid var(--line-2); border-radius: var(--r-xl); background: var(--s1); min-width: 0; }
+.plan-feat { border: 1px solid transparent; background: linear-gradient(var(--s1), var(--s1)) padding-box, linear-gradient(160deg, var(--ac-400), var(--cy) 60%, var(--ac-600)) border-box; box-shadow: 0 24px 64px -20px var(--glow); }
+.plan-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.plan-price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.plan-price b { font: 700 44px/48px var(--font-sans); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.plan-price span { color: var(--t3); font: 400 14px/20px var(--font-sans); }
+.plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; flex: 1; align-content: start; }
+.plan li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; color: var(--t2); font: 400 15px/22px var(--font-sans); }
+.plan li svg { width: 20px; height: 20px; margin-top: 1px; fill: none; stroke: var(--ok); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.plan-desc { color: var(--t2); font: 400 14px/20px var(--font-sans); }
+@media (min-width: 960px) { .plan-desc { min-height: 40px; } }
+
+/* Финальный призыв */
+.cta-card { position: relative; overflow: hidden; display: grid; gap: 24px; justify-items: start; padding: 40px 28px; border-radius: 32px; border: 1px solid transparent; background: linear-gradient(var(--s1), var(--s1)) padding-box, linear-gradient(135deg, var(--ac-500), var(--line-2) 45%, var(--cy)) border-box; }
+.cta-card::after { content: ""; position: absolute; right: -120px; bottom: -160px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(124,92,255,.35), transparent 65%); pointer-events: none; }
+.cta-card > * { position: relative; z-index: 1; }
+.cta-card .t-body-l { color: var(--t2); max-width: 560px; }
+@media (min-width: 768px) { .cta-card { padding: 64px; } }
+
+/* Подвал */
+.ftr { border-top: 1px solid var(--line); padding-block: 56px 40px; }
+.ftr-grid { display: grid; gap: 40px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+.ftr-grid > :first-child { grid-column: 1 / -1; max-width: 320px; display: grid; gap: 16px; }
+@media (min-width: 720px) { .ftr-grid > :first-child { grid-column: auto; } .ftr-grid { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
+.ftr h4 { font: 500 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--t3); margin-bottom: 16px; }
+.ftr ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ftr li a { color: var(--t2); font: 400 15px/22px var(--font-sans); }
+.ftr li a:hover { color: var(--t1); }
+.ftr-bot { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--t3); font: 400 13px/20px var(--font-sans); }
+
+/* ---------- UI-кит ---------- */
+.kit-sec { padding-block: 40px; border-bottom: 1px solid var(--line); }
+.kit-sec:last-child { border-bottom: 0; }
+.kit-h { display: grid; gap: 8px; margin-bottom: 28px; }
+.kit-h p { color: var(--t2); max-width: 680px; }
+.swatches { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
+.sw { border: 1px solid var(--line-2); border-radius: var(--r-lg); overflow: hidden; background: var(--s1); min-width: 0; }
+.sw i { display: block; height: 64px; border-bottom: 1px solid var(--line-2); }
+.sw div { padding: 12px 14px; display: grid; gap: 2px; }
+.sw b { font: 600 14px/20px var(--font-sans); }
+.sw code, .kit-table code { font: 400 12px/16px var(--font-mono); color: var(--t3); word-break: break-all; }
+.sw span { font: 400 12px/16px var(--font-sans); color: var(--t2); }
+.kit-sub { font: 500 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--t3); margin: 28px 0 14px; }
+.scroll-x { overflow-x: auto; border: 1px solid var(--line-2); border-radius: var(--r-lg); }
+.kit-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.kit-table th, .kit-table td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.kit-table tr:last-child td { border-bottom: 0; }
+.kit-table th { font: 500 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--t3); background: var(--s1); }
+.matrix { display: grid; gap: 16px 12px; grid-template-columns: 120px repeat(6, max-content); align-items: center; min-width: 900px; padding: 20px; }
+.matrix .lab { font: 500 12px/16px var(--font-mono); color: var(--t3); text-transform: uppercase; letter-spacing: .06em; }
+.row-wrap { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.spacing { display: grid; gap: 10px; }
+.sp { display: grid; grid-template-columns: 72px 56px 1fr; gap: 12px; align-items: center; font: 400 13px/20px var(--font-mono); color: var(--t2); }
+.sp i { height: 12px; border-radius: 2px; background: var(--ac-500); display: block; }
+.radii { display: flex; flex-wrap: wrap; gap: 16px; }
+.rd { width: 96px; height: 96px; border: 1px solid var(--line-3); background: var(--s2); display: grid; place-items: center; font: 400 12px/16px var(--font-mono); color: var(--t2); text-align: center; }
+.icons { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 96px), 1fr)); }
+.icons div { display: grid; gap: 8px; justify-items: center; padding: 16px 8px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--s1); font: 400 12px/16px var(--font-mono); color: var(--t3); }
+.icons svg { width: 24px; height: 24px; fill: none; stroke: var(--t1); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.cmp-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.shadow-demo { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.sh { height: 96px; border-radius: var(--r-lg); background: var(--s2); border: 1px solid var(--line-2); display: grid; place-items: center; font: 400 12px/16px var(--font-mono); color: var(--t2); text-align: center; padding: 8px; }
+.grid-demo { display: grid; gap: 6px; grid-template-columns: repeat(12, minmax(0, 1fr)); margin-bottom: 12px; }
+.grid-demo i { height: 48px; background: rgba(124,92,255,.18); border: 1px solid rgba(161,139,255,.35); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="viewbar"><div class="wrap">
+  <span>Макет</span>
+  <a href="#" id="tab-landing" aria-current="page">Лендинг</a>
+  <a href="#kit" id="tab-kit">Дизайн-система</a>
+</div></div>
+
+<header class="hdr" id="top">
+  <div class="wrap hdr-in">
+    <a class="logo" href="#top" aria-label="Продукт, на главную">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#6A45F5"/><path d="M8 9l6 11 6-11" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Продукт
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#benefits">Преимущества</a><a href="#how">Как это работает</a><a href="#pricing">Тарифы</a>
+    </nav>
+    <div class="hdr-cta">
+      <a class="btn btn-ghost btn-s" href="#top">Войти</a>
+      <a class="btn btn-primary btn-s" href="#pricing">Оформить подписку</a>
+    </div>
+    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Открыть меню">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+    </button>
+  </div>
+  <div class="mnav" id="mnav" hidden><div class="wrap">
+    <a href="#benefits">Преимущества</a><a href="#how">Как это работает</a><a href="#pricing">Тарифы</a>
+    <a class="btn btn-primary btn-m btn-block" href="#pricing">Оформить подписку</a>
+  </div></div>
+</header>
+
+<!-- ============ ЛЕНДИНГ ============ -->
+<main id="landing">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="badge badge-ac">НОВОЕ · сценарии на естественном языке</span>
+        <h1 class="t-display">Автоматизируйте рутину команды за <span class="mark">один вечер</span></h1>
+        <p class="t-body-l">Подключите сервисы, опишите процесс обычными словами, и Продукт соберёт сценарий и проследит за его работой.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#pricing">Оформить подписку</a>
+          <a class="btn btn-secondary" href="#how">Как это работает</a>
+        </div>
+        <p class="hero-note">Отмена подписки в любой момент</p>
+      </div>
+      <div class="mock" role="img" aria-label="Пример сценария: триггер, условие и действие, статус «Активен», 1 284 запуска за неделю">
+        <div class="mock-bar"><i></i><i></i><i></i><span class="mono">сценарий / новая-заявка</span><span class="badge"><b class="dot" style="display:inline-block"></b>Активен</span></div>
+        <div class="mock-body">
+          <div class="node"><b>ТРИГГЕР</b>Новая заявка из формы на сайте</div><div class="link"></div>
+          <div class="node"><b>УСЛОВИЕ</b>Сумма больше 50 000 ₽</div><div class="link"></div>
+          <div class="node node-ac"><b>ДЕЙСТВИЕ</b>Создать задачу и написать менеджеру в чат</div>
+        </div>
+        <div class="mock-foot">
+          <div><b>1 284</b><span>запусков за неделю</span></div>
+          <div><b>99,2%</b><span>без ошибок</span></div>
+          <div><b>1,4 с</b><span>среднее время</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="benefits">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="t-overline">Преимущества</span>
+        <h2 class="t-h2">Всё, что нужно, чтобы рутина работала сама</h2>
+        <p class="t-body-l c-t2">Шесть причин, по которым команды переносят свои процессы в Продукт.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><h3 class="t-h4">Запуск за минуты</h3><p class="t-body-s">Первый сценарий работает в день регистрации. Готовые шаблоны закрывают типовые задачи.</p></article>
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg></div><h3 class="t-h4">Без программирования</h3><p class="t-body-s">Сценарий описывается словами. Код нужен только тем, кто хочет тонкой настройки.</p></article>
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div><h3 class="t-h4">Прозрачные логи</h3><p class="t-body-s">Каждый запуск записывается. Видно, что произошло, когда и почему, и можно повторить шаг.</p></article>
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></svg></div><h3 class="t-h4">Защита данных</h3><p class="t-body-s">Шифрование при хранении и передаче, роли доступа и журнал действий администраторов.</p></article>
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></div><h3 class="t-h4">Готовые интеграции</h3><p class="t-body-s">Почта, таблицы, мессенджеры, CRM и платёжные сервисы подключаются в пару кликов.</p></article>
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3 class="t-h4">Живая поддержка</h3><p class="t-body-s">Отвечают люди, которые знают продукт. Помогают собрать первый сценарий.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec band" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="t-overline">Как это работает</span>
+        <h2 class="t-h2">Три шага от идеи до работающего сценария</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">ШАГ 01</span><h3 class="t-h4">Подключите сервисы</h3><p class="t-body-s">Выберите нужные приложения из списка и разрешите доступ. Ключи хранятся в зашифрованном виде.</p></div>
+        <div class="step"><span class="step-n">ШАГ 02</span><h3 class="t-h4">Опишите процесс</h3><p class="t-body-s">Напишите, что должно происходить, например «когда приходит заявка, создай задачу». Продукт предложит сценарий, вы поправите детали.</p></div>
+        <div class="step"><span class="step-n">ШАГ 03</span><h3 class="t-h4">Запустите и следите</h3><p class="t-body-s">Включите сценарий и смотрите за запусками в журнале. При ошибке придёт уведомление.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="pricing">
+    <div class="wrap">
+      <div class="price-head">
+        <div class="sec-head">
+          <span class="t-overline">Тарифы</span>
+          <h2 class="t-h2">Выберите план под размер команды</h2>
+          <p class="t-body-l c-t2">Тариф можно сменить или отменить в любой момент.</p>
+        </div>
+        <div class="seg" role="group" aria-label="Период оплаты">
+          <button type="button" id="p-m" aria-pressed="true">Месяц</button>
+          <button type="button" id="p-y" aria-pressed="false">Год<small>−20%</small></button>
+        </div>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <div class="plan-top"><h3 class="t-h4">Старт</h3></div>
+          <p class="plan-desc">Для одного человека и первых автоматизаций.</p>
+          <div class="plan-price"><b data-m="990" data-y="790">990 ₽</b><span>в месяц</span></div>
+          <a class="btn btn-secondary btn-m btn-block" href="#top">Выбрать Старт</a>
+          <ul>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>5 активных сценариев</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>5 000 запусков в месяц</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Журнал за 7 дней</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Поддержка по почте</li>
+          </ul>
+        </article>
+        <article class="plan plan-feat">
+          <div class="plan-top"><h3 class="t-h4">Команда</h3><span class="badge badge-ac">Популярный</span></div>
+          <p class="plan-desc">Для небольших команд, где процессы общие.</p>
+          <div class="plan-price"><b data-m="2990" data-y="2390">2 990 ₽</b><span>в месяц</span></div>
+          <a class="btn btn-primary btn-m btn-block" href="#top">Оформить подписку</a>
+          <ul>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>50 активных сценариев</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>100 000 запусков в месяц</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>До 10 участников и роли доступа</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Журнал за 90 дней</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Чат-поддержка</li>
+          </ul>
+        </article>
+        <article class="plan">
+          <div class="plan-top"><h3 class="t-h4">Бизнес</h3></div>
+          <p class="plan-desc">Для компаний с требованиями к безопасности.</p>
+          <div class="plan-price"><b data-m="7990" data-y="6390">7 990 ₽</b><span>в месяц</span></div>
+          <a class="btn btn-secondary btn-m btn-block" href="#top">Выбрать Бизнес</a>
+          <ul>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Без лимита сценариев</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>1 000 000 запусков в месяц</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Единый вход (SSO) и аудит действий</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Журнал за 1 год</li>
+            <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Персональный менеджер</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-card">
+        <h2 class="t-h2" style="max-width:640px">Соберите первый сценарий уже сегодня</h2>
+        <p class="t-body-l">Оформите подписку, подключите сервисы и передайте рутину Продукту.</p>
+        <a class="btn btn-primary" href="#pricing">Оформить подписку</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ UI-КИТ ============ -->
+<main id="kit" hidden>
+  <div class="wrap">
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Основы</span><h1 class="t-h2">Дизайн-система лендинга</h1><p>Токены и компоненты, из которых собран макет. Названия токенов совпадают с файлом <span class="mono">tokens.json</span> и переменными в Figma.</p></div>
+      <h2 class="kit-sub">Цвет · поверхности и линии</h2>
+      <div class="swatches" id="sw-surface"></div>
+      <h2 class="kit-sub">Цвет · текст</h2>
+      <div class="swatches" id="sw-text"></div>
+      <h2 class="kit-sub">Цвет · акцент</h2>
+      <div class="swatches" id="sw-accent"></div>
+      <h2 class="kit-sub">Цвет · статусы и данные</h2>
+      <div class="swatches" id="sw-status"></div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Основы</span><h2 class="t-h3">Типографика</h2><p>Onest для интерфейса и заголовков, JetBrains Mono для подписей, цифр и служебных меток. Обе гарнитуры поддерживают кириллицу и бесплатны в Figma.</p></div>
+      <div class="scroll-x"><table class="kit-table">
+        <tr><th>Стиль</th><th>Образец</th><th>Десктоп</th><th>Мобильный</th></tr>
+        <tr><td>Display</td><td><span class="t-display" style="font-size:40px;line-height:44px">Заголовок</span></td><td><code>64 / 68 · Bold 700 · −2%</code></td><td><code>40 / 44</code></td></tr>
+        <tr><td>H2</td><td><span class="t-h2">Заголовок раздела</span></td><td><code>36 / 42 · SemiBold 600 · −1.5%</code></td><td><code>28 / 34</code></td></tr>
+        <tr><td>H3</td><td><span class="t-h3">Подзаголовок</span></td><td><code>24 / 32 · SemiBold 600 · −1%</code></td><td><code>22 / 30</code></td></tr>
+        <tr><td>H4</td><td><span class="t-h4">Заголовок карточки</span></td><td><code>20 / 28 · SemiBold 600</code></td><td><code>20 / 28</code></td></tr>
+        <tr><td>Body L</td><td><span class="t-body-l">Основной крупный текст</span></td><td><code>18 / 28 · Regular 400</code></td><td><code>18 / 28</code></td></tr>
+        <tr><td>Body</td><td><span class="t-body">Основной текст</span></td><td><code>16 / 24 · Regular 400</code></td><td><code>16 / 24</code></td></tr>
+        <tr><td>Body S</td><td><span class="t-body-s">Мелкий текст в карточках</span></td><td><code>14 / 20 · Regular 400</code></td><td><code>14 / 20</code></td></tr>
+        <tr><td>Caption</td><td><span class="t-caption">Подпись</span></td><td><code>12 / 16 · Regular 400</code></td><td><code>12 / 16</code></td></tr>
+        <tr><td>Overline</td><td><span class="t-overline">Надпись раздела</span></td><td><code>JetBrains Mono 12 / 16 · Medium 500 · +8% · CAPS</code></td><td><code>12 / 16</code></td></tr>
+      </table></div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Основы</span><h2 class="t-h3">Сетка, отступы, радиусы, эффекты</h2><p>Базовая единица 4 px. Все отступы и размеры кратны ей.</p></div>
+      <h3 class="kit-sub">Сетка · 12 колонок на десктопе</h3>
+      <div class="grid-demo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="scroll-x"><table class="kit-table">
+        <tr><th>Экран</th><th>Ширина макета</th><th>Колонки</th><th>Gutter</th><th>Поля</th><th>Контейнер</th></tr>
+        <tr><td>Desktop</td><td>1440</td><td>12</td><td>24</td><td>auto</td><td>1200</td></tr>
+        <tr><td>Tablet</td><td>768</td><td>8</td><td>24</td><td>24</td><td>fluid</td></tr>
+        <tr><td>Mobile</td><td>375</td><td>4</td><td>16</td><td>20</td><td>fluid</td></tr>
+      </table></div>
+      <h3 class="kit-sub">Отступы</h3>
+      <div class="spacing" id="spacing"></div>
+      <h3 class="kit-sub">Радиусы</h3>
+      <div class="radii">
+        <div class="rd" style="border-radius:6px">6<br>sm</div><div class="rd" style="border-radius:10px">10<br>md</div><div class="rd" style="border-radius:16px">16<br>lg</div><div class="rd" style="border-radius:24px">24<br>xl</div><div class="rd" style="border-radius:999px">999<br>pill</div>
+      </div>
+      <h3 class="kit-sub">Эффекты</h3>
+      <div class="shadow-demo">
+        <div class="sh" style="box-shadow:0 8px 28px -4px rgba(124,92,255,.35)">glow/button<br>0 8 28 −4 · accent 35%</div>
+        <div class="sh" style="box-shadow:0 24px 64px -20px rgba(124,92,255,.35)">glow/card<br>0 24 64 −20 · accent 35%</div>
+        <div class="sh" style="box-shadow:0 32px 80px -24px rgba(0,0,0,.7)">shadow/window<br>0 32 80 −24 · black 70%</div>
+        <div class="sh" style="backdrop-filter:blur(14px);background:rgba(10,11,16,.78)">blur/header<br>blur 14 · bg 78%</div>
+      </div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Компоненты</span><h2 class="t-h3">Кнопки</h2><p>Три варианта, три размера и шесть состояний. Основная кнопка на лендинге одна на экран. Белый текст на фоне <span class="mono">accent/600</span> даёт контраст 5,55:1.</p></div>
+      <div class="scroll-x"><div class="matrix">
+        <span class="lab"></span><span class="lab">Default</span><span class="lab">Hover</span><span class="lab">Pressed</span><span class="lab">Focus</span><span class="lab">Disabled</span><span class="lab">Loading</span>
+        <span class="lab">Primary L · 56</span>
+        <button class="btn btn-primary">Оформить</button><button class="btn btn-primary is-hover">Оформить</button><button class="btn btn-primary is-active">Оформить</button><button class="btn btn-primary is-focus">Оформить</button><button class="btn btn-primary" disabled>Оформить</button><button class="btn btn-primary is-loading">Оформить</button>
+        <span class="lab">Secondary L · 56</span>
+        <button class="btn btn-secondary">Подробнее</button><button class="btn btn-secondary is-hover">Подробнее</button><button class="btn btn-secondary is-active">Подробнее</button><button class="btn btn-secondary is-focus">Подробнее</button><button class="btn btn-secondary" disabled>Подробнее</button><button class="btn btn-secondary is-loading">Подробнее</button>
+        <span class="lab">Primary M · 44</span>
+        <button class="btn btn-primary btn-m">Выбрать</button><button class="btn btn-primary btn-m is-hover">Выбрать</button><button class="btn btn-primary btn-m is-active">Выбрать</button><button class="btn btn-primary btn-m is-focus">Выбрать</button><button class="btn btn-primary btn-m" disabled>Выбрать</button><button class="btn btn-primary btn-m is-loading">Выбрать</button>
+        <span class="lab">Ghost S · 36</span>
+        <button class="btn btn-ghost btn-s">Войти</button><button class="btn btn-ghost btn-s is-hover">Войти</button><button class="btn btn-ghost btn-s is-active">Войти</button><button class="btn btn-ghost btn-s is-focus">Войти</button><button class="btn btn-ghost btn-s" disabled>Войти</button><button class="btn btn-ghost btn-s is-loading">Войти</button>
+      </div></div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Компоненты</span><h2 class="t-h3">Бейдж, переключатель, навигация</h2></div>
+      <div class="row-wrap" style="margin-bottom:28px">
+        <span class="badge">Нейтральный</span><span class="badge badge-ac">Акцентный</span>
+        <span class="badge" style="color:var(--ok);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.08)"><b class="dot" style="display:inline-block"></b>Активен</span>
+        <div class="seg"><button type="button" class="is-on">Месяц</button><button type="button">Год<small>−20%</small></button></div>
+      </div>
+      <div class="scroll-x"><div style="padding:16px 20px;display:flex;gap:24px;align-items:center;min-width:760px">
+        <span class="logo"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#6A45F5"/><path d="M8 9l6 11 6-11" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Продукт</span>
+        <span class="row-wrap" style="gap:4px"><a class="btn btn-ghost btn-m" style="color:var(--t1);background:var(--s2)" href="#kit">Активный пункт</a><a class="btn btn-ghost btn-m" href="#kit">Пункт</a><a class="btn btn-ghost btn-m" href="#kit">Пункт</a></span>
+        <span style="margin-left:auto" class="row-wrap"><a class="btn btn-ghost btn-s" href="#kit">Войти</a><a class="btn btn-primary btn-s" href="#kit">Оформить подписку</a></span>
+      </div></div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Компоненты</span><h2 class="t-h3">Карточки</h2><p>Карточка преимущества, шаг процесса и тарифный план в обычном и выделенном виде.</p></div>
+      <div class="cmp-grid">
+        <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><h3 class="t-h4">Карточка преимущества</h3><p class="t-body-s">Padding 32, радиус 24, иконка 48, зазор 16.</p></article>
+        <div class="step"><span class="step-n">ШАГ 01</span><h3 class="t-h4">Шаг процесса</h3><p class="t-body-s">Верхняя линия 1 px и акцентная метка 48×2.</p></div>
+        <article class="plan plan-feat"><div class="plan-top"><h3 class="t-h4">Тариф выделенный</h3><span class="badge badge-ac">Популярный</span></div><div class="plan-price"><b>2 990 ₽</b><span>в месяц</span></div><a class="btn btn-primary btn-m btn-block" href="#kit">Оформить подписку</a></article>
+      </div>
+    </section>
+
+    <section class="kit-sec">
+      <div class="kit-h"><span class="t-overline c-ac">Компоненты</span><h2 class="t-h3">Иконки</h2><p>Сетка 24×24, обводка 1,5 px, скруглённые концы. Цвет наследует текст.</p></div>
+      <div class="icons" id="icons"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div>
+        <a class="logo" href="#top"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#6A45F5"/><path d="M8 9l6 11 6-11" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Продукт</a>
+        <p class="t-body-s c-t3">Автоматизация рутины для команд, без программирования.</p>
+      </div>
+      <div><h4>Продукт</h4><ul><li><a href="#benefits">Преимущества</a></li><li><a href="#how">Как это работает</a></li><li><a href="#pricing">Тарифы</a></li></ul></div>
+      <div><h4>Компания</h4><ul><li><a href="#top">О нас</a></li><li><a href="#top">Блог</a></li><li><a href="#top">Контакты</a></li></ul></div>
+      <div><h4>Документы</h4><ul><li><a href="#top">Условия использования</a></li><li><a href="#top">Политика конфиденциальности</a></li></ul></div>
+    </div>
+    <div class="ftr-bot"><span>© 2026 Продукт</span><span>Название, тексты и цифры на макете — примеры</span></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+
+  // Переключение «Лендинг» / «Дизайн-система» по hash (#kit)
+  function route() {
+    var kit = location.hash === '#kit';
+    $('#landing').hidden = kit; $('#kit').hidden = !kit;
+    $('#tab-landing').setAttribute('aria-current', kit ? 'false' : 'page');
+    $('#tab-kit').setAttribute('aria-current', kit ? 'page' : 'false');
+    if (kit) window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route); route();
+  $('#tab-landing').addEventListener('click', function (e) { e.preventDefault(); history.replaceState(null, '', location.pathname + location.search); route(); window.scrollTo(0, 0); });
+
+  // Мобильное меню
+  var burger = $('#burger'), mnav = $('#mnav');
+  burger.addEventListener('click', function () {
+    var open = mnav.hidden; mnav.hidden = !open;
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  });
+  mnav.addEventListener('click', function (e) { if (e.target.closest('a')) { mnav.hidden = true; burger.setAttribute('aria-expanded', 'false'); } });
+
+  // Переключатель периода оплаты
+  var fmt = function (n) { return n.toLocaleString('ru-RU') + ' ₽'; };
+  function setPeriod(year) {
+    $('#p-m').setAttribute('aria-pressed', String(!year));
+    $('#p-y').setAttribute('aria-pressed', String(year));
+    document.querySelectorAll('.plan-price b[data-m]').forEach(function (b) {
+      b.textContent = fmt(Number(year ? b.dataset.y : b.dataset.m));
+      b.nextElementSibling.textContent = year ? 'в месяц, при оплате за год' : 'в месяц';
+    });
+  }
+  $('#p-m').addEventListener('click', function () { setPeriod(false); });
+  $('#p-y').addEventListener('click', function () { setPeriod(true); });
+
+  // UI-кит: образцы цветов
+  var groups = {
+    'sw-surface': [['bg/base','#0A0B10','Фон страницы'],['surface/1','#11131A','Карточки, полосы'],['surface/2','#171A23','Вложенные блоки, hover'],['surface/3','#1E2230','Активный сегмент'],['line/subtle','#232838','Разделители'],['line/default','#2D3345','Рамки карточек'],['line/strong','#3D4560','Рамка вторичной кнопки']],
+    'sw-text': [['text/primary','#F2F4F8','Заголовки · 17,9:1 на bg'],['text/secondary','#A6AEC2','Основной текст · 8,9:1'],['text/tertiary','#7D86A0','Подписи · 5,4:1']],
+    'sw-accent': [['accent/300','#C2B5FF','Метки, иконки'],['accent/400','#A18BFF','Текстовые акценты · 7,2:1'],['accent/500','#7C5CFF','Декор, свечение'],['accent/600','#6A45F5','Фон кнопки · 5,6:1 с белым'],['accent/700','#5733D6','Кнопка нажата']],
+    'sw-status': [['data/cyan','#2DD4FF','Метрики, градиент · 11,2:1'],['status/success','#34D399','Успех, «Активен» · 10,2:1'],['status/warning','#FBBF24','Предупреждение · 11,8:1'],['status/error','#F87171','Ошибка · 7,1:1']]
+  };
+  Object.keys(groups).forEach(function (id) {
+    $('#' + id).innerHTML = groups[id].map(function (c) {
+      return '<div class="sw"><i style="background:' + c[1] + '"></i><div><b>' + c[0] + '</b><code>' + c[1] + '</code><span>' + c[2] + '</span></div></div>';
+    }).join('');
+  });
+  $('#spacing').innerHTML = [4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map(function (n, i) {
+    return '<div class="sp"><span>space/' + (i + 1) + '</span><span>' + n + ' px</span><i style="width:' + n + 'px"></i></div>';
+  }).join('');
+  var ic = { 'bolt': 'M13 2L4 14h7l-1 8 9-12h-7l1-8z', 'braces': 'M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1', 'list': 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01', 'shield': 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z', 'link': 'M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1', 'chat': 'M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z', 'check': 'M4 12.5l5 5L20 6', 'menu': 'M3 6h18M3 12h18M3 18h18' };
+  $('#icons').innerHTML = Object.keys(ic).map(function (k) { return '<div><svg viewBox="0 0 24 24"><path d="' + ic[k] + '"/></svg>' + k + '</div>'; }).join('');
+})();
+</script>
+
+</body>
+</html>
